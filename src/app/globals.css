@@ -119,29 +119,74 @@ body.dark-mode .subtitle {
 }
 
 /* Post List */
+.post-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  margin-top: 24px;
+}
+
+@media (min-width: 640px) {
+  .post-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 992px) {
+  .post-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 .post-list .post-item {
   background-color: #fff;
   border: 1px solid #ddd;
   padding: 20px;
-  margin-bottom: 20px;
-  border-radius: 8px;
-  transition: box-shadow 0.3s ease;
+  border-radius: 14px;
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+  will-change: transform;
+
+  /* untuk efek “card” yang lebih hidup */
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.04);
+  transform: translateY(0);
+  position: relative;
+  overflow: hidden;
+}
+
+.post-list .post-item::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  background: radial-gradient(350px circle at var(--mx, 50%) var(--my, 30%), rgba(0, 170, 255, 0.18), transparent 55%);
+  opacity: 0;
+  transition: opacity 200ms ease;
+  pointer-events: none;
 }
 
 body.dark-mode .post-list .post-item {
   background-color: #1e1e1e;
   border-color: #333;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
 }
 
 .post-list .post-item:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-6px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+  border-color: rgba(0, 170, 255, 0.35);
 }
 
+.post-list .post-item:hover::after {
+  opacity: 1;
+}
+
+.post-list .post-item h3 a,
 .post-list .post-item h2 a {
   color: #1a1a1a;
   font-size: 1.5em;
+  font-weight: 650;
 }
 
+body.dark-mode .post-list .post-item h3 a,
 body.dark-mode .post-list .post-item h2 a {
   color: #eee;
 }
