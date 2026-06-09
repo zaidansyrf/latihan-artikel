@@ -10,7 +10,11 @@ function PostList({posts}: PostListProps) {
       {
       posts.map((post)=>(
         <div className="post-item" key={post.id}>
-          <h3><Link href={`/posts/${post.id}`}>{post.title}</Link></h3>
+          <h3>
+            <Link href={`/posts/${post.id}`}>
+              {post.title}
+            </Link>
+          </h3>
         </div>
       ))
       }

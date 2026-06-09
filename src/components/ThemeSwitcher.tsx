@@ -1,27 +1,42 @@
-"use client"
-import {useEffect, useState} from 'react'
+"use client";
 
-function ThemeSwitcher() {
-    const [dark,setDark] = useState(false);
-    useEffect(()=>{
-      const savedTheme = localStorage.getItem('theme');
-      if(savedTheme == 'dark-mode'){
-        setDark(true);
-        document.body.classList.add('dark-mode');
-      }
-    },[])
-    useEffect(()=>{
-      if(dark){
-        document.body.classList.add('dark-mode');
-        localStorage.setItem('theme', 'dark-mode');
-      }else{
-        document.body.classList.remove('dark-mode');
-        localStorage.setItem('theme', '');
-      }
-    })
+import { Moon, Sun } from "lucide-react";
+import { useEffect, useState } from "react";
+
+export default function ThemeSwitcher() {
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+
+    if (savedTheme === "dark") {
+      document.documentElement.classList.add("dark");
+      setIsDark(true);
+    }
+  }, []);
+
+  function toggleTheme() {
+    const nextTheme = !isDark;
+
+    setIsDark(nextTheme);
+
+    if (nextTheme) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }
+
   return (
-<button id="theme-switcher" className="theme-switcher" onClick={()=>setDark(!dark)}>Change Theme</button>
-  )
+    <button
+      type="button"
+      className="theme-switcher"
+      onClick={toggleTheme}
+      aria-label="Toggle dark mode"
+    >
+      {isDark ? <Sun size={20} /> : <Moon size={20} />}
+    </button>
+  );
 }
-
-export default ThemeSwitcher
