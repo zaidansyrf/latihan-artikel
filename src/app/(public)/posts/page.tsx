@@ -218,7 +218,8 @@ const endItem = Math.min(page * safeLimit, totalPosts);
                     </span>
 
                     <h3>{post.title}</h3>
-                    <p>{post.content.slice(0, 90)}...</p>
+                    {/* <p>{post.content.slice(0, 90)}...</p> */}
+                    <p>{post.content.replace(/<[^>]*>/g, "").slice(0, 90)}...</p>
                     <p className="meta">
                       By {post.author} • {getReadingTime(post.content)}
                     </p>

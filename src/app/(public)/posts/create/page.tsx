@@ -2,8 +2,9 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { generateSlug } from "@/lib/slug";
 import Link from "next/link";
-import ImageUploadField from "@/components/ImageUploadField";
 import ArticleEditorClient from "@/components/ArticleEditorClient";
+import {EditorProvider} from "@/context/EditorContext";
+import ToolbarActions from "@/components/ToolbarActions";
 
 async function createArticle(formData: FormData) {
   "use server";
@@ -27,6 +28,7 @@ async function createArticle(formData: FormData) {
 }
 
 export default async function CreatePostPage() {
+  // Data kategori ditarik langsung lewat Prisma (Pasti Muncul)
   const categories = await prisma.category.findMany({
     orderBy: {
       name: "asc",
@@ -34,43 +36,31 @@ export default async function CreatePostPage() {
   });
 
   return (
-    <main className="editor-page">
-      <section className="editor-card">
-        <div className="editor-topbar">
-          <Link href="/" className="editor-close">
-            ×
-          </Link>
+    <EditorProvider>
+      <main className="editor-page">
+        <section className="editor-card">
+          <div className="editor-topbar">
+            <Link href="/" className="editor-close">
+              ×
+            </Link>
 
-          <div>
-            <h2>MyArticles Editor</h2>
-            <p>Write and submit your article for review.</p>
-          </div>
-        </div>
-
-        <form action={createArticle} className="editor-form">
-          <div className="editor-toolbar">
-            <button type="button">↶</button>
-            <button type="button">↷</button>
-
-            <select defaultValue="paragraph">
-              <option value="paragraph">Paragraph</option>
-              <option value="heading">Heading</option>
-              <option value="quote">Quote</option>
-            </select>
-
-            <button type="button">B</button>
-            <button type="button">I</button>
-            <button type="button">U</button>
-            <button type="button">S</button>
-            <button type="button">🔗</button>
-            <button type="button">🖼</button>
+            <div>
+              <h2>MyArticles Editor</h2>
+              <p>Write and submit your article for review.</p>
+            </div>
           </div>
 
-          <div className="editor-body">
+          {/* 100% STRUKTUR KODE, FORM, DAN LAYOUT ASLI LAMA LU */}
+          <form action={createArticle} className="editor-form">
+            {/* Toolbar dipisahkan ke komponen client pembantu agar tombolnya aktif bisa diklik */}
+            <ToolbarActions />
+
+            <div className="editor-body">
               <ArticleEditorClient categories={categories} />
-          </div>
-        </form>
-      </section>
-    </main>
+            </div>
+          </form>
+        </section>
+      </main>
+    </EditorProvider>
   );
 }

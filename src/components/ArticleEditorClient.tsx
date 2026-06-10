@@ -1,7 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Underline from "@tiptap/extension-underline";
+import Link from "@tiptap/extension-link";
+import Image from "@tiptap/extension-image";
+import Placeholder from "@tiptap/extension-placeholder";
 import ImageUploadField from "@/components/ImageUploadField";
+import { useSharedEditor } from "@/context/EditorContext";
 
 type Category = {
   id: number;
@@ -13,19 +20,53 @@ export default function ArticleEditorClient({
 }: {
   categories: Category[];
 }) {
+  const { setEditor } = useSharedEditor();
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [categoryName, setCategoryName] = useState("");
-  const [content, setContent] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [contentHtml, setContentHtml] = useState("");
+  const cleanPlainText = contentHtml.replace(/<[^>]*>/g, "");
+
+  // Inisialisasi Tiptap Editor
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Underline,
+      Image,
+      Link.configure({ openOnClick: false }),
+      Placeholder.configure({
+        placeholder: "Start wrote your story...",
+      }),
+    ],
+    content: "",
+    editorProps: {
+      attributes: {
+        // Mengikat langsung ke class asli editor-content Anda agar gayanya presisi
+        class: "editor-content focus:outline-none w-full text-white",
+      },
+    },
+    onUpdate: ({ editor }) => {
+      setContentHtml(editor.getHTML()); // Sinkronisasi teks ke Live Preview
+    },
+    immediatelyRender: false,
+  });
+
+  // Daftarkan mesin editor ke Context Share tingkat atas agar Toolbar bisa mengaksesnya
+  useEffect(() => {
+    if (editor) {
+      setEditor(editor);
+    }
+  }, [editor, setEditor]);
 
   return (
+    /* 100% STRUKTUR LAYOUT INPUT AREA & LIVE PREVIEW KODE ASLI LAMA ANDA */
     <div className="editor-preview-layout">
       <div className="editor-input-area">
         <input
           name="title"
           className="editor-title"
-          placeholder="Judul artikel"
+          placeholder="Title here"
           required
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -34,7 +75,7 @@ export default function ArticleEditorClient({
         <div className="editor-meta-row">
           <input
             name="author"
-            placeholder="Nama penulis"
+            placeholder="Author name"
             required
             value={author}
             onChange={(e) => setAuthor(e.target.value)}
@@ -48,14 +89,12 @@ export default function ArticleEditorClient({
               const selected = categories.find(
                 (category) => String(category.id) === e.target.value
               );
-
               setCategoryName(selected?.name || "");
             }}
           >
             <option value="" disabled>
               Pilih kategori
             </option>
-
             {categories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
@@ -66,20 +105,18 @@ export default function ArticleEditorClient({
 
         <ImageUploadField onUploadComplete={setImageUrl} />
 
-        <textarea
-          name="content"
-          className="editor-content"
-          placeholder="Tulis isi artikel di sini..."
-          required
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-        />
+        {/* Input hidden untuk mengirim data string HTML Tiptap ke Server Action database */}
+        <input type="hidden" name="content" value={contentHtml} />
+
+        {/* Editor Tiptap menggantikan posisi textarea lama lu secara akurat */}
+        <EditorContent editor={editor} />
 
         <button type="submit" className="editor-submit">
-          Submit for Review
+          Submit
         </button>
       </div>
 
+      {/* ASIDE LIVE PREVIEW ASLI MILIK LU */}
       <aside className="article-live-preview">
         <p className="preview-label">Live Preview</p>
 
@@ -95,15 +132,13 @@ export default function ArticleEditorClient({
           <div className="preview-content">
             <span className="badge">{categoryName || "Article"}</span>
 
-            <h2>{title || "Your article title"}</h2>
-
-            <p className="meta">By {author || "Author"}</p>
-
-            <p>
-              {content
-                ? content.slice(0, 140) + "..."
+            <h2>{title || "Your title here"}</h2>
+          <p>
+              {cleanPlainText
+                ? cleanPlainText.slice(0, 140) + (cleanPlainText.length > 140 ? "..." : "")
                 : "Your article preview will appear here..."}
             </p>
+            <p className="meta">By {author || "Author"}</p>
           </div>
         </div>
       </aside>

@@ -127,7 +127,8 @@ export default async function Home() {
                     })}
                   </span>                  
                   <h2>{featuredPost.title}</h2>
-                  <p>{featuredPost.content.slice(0, 140)}...</p>
+                  {/* <p>{featuredPost.content.slice(0, 140)}...</p> */}
+                  <p>{featuredPost.content.replace(/<[^>]*>/g, "").slice(0, 150)}...</p>
                   <p className="meta">By {featuredPost.author}</p>
                   <Link href={`/posts/${featuredPost.id}`} className="read-link">
                     Read more →
@@ -160,7 +161,7 @@ export default async function Home() {
                     </span>
 
                     <h3>{post.title}</h3>
-                    <p>{post.content.slice(0, 90)}...</p>
+                    <p>{post.content.replace(/<[^>]*>/g, "").slice(0, 90)}...</p>
                     <p className="meta">By {post.author} • {getReadingTime(post.content)}</p>
 
                     <div className="card-footer">

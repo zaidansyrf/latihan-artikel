@@ -46,7 +46,7 @@ export async function generateMetadata({
     };
   }
 
-  const description = post.content.slice(0, 150);
+  const description = post.content.replace(/<[^>]*>/g, "").slice(0, 150); // Membersihkan tag HTML untuk deskripsi SEO
 
   return {
     title: post.title,
@@ -61,8 +61,8 @@ export async function generateMetadata({
               url: post.imageUrl,
               width: 1200,
               height: 630,
-            },
-          ]
+              },
+            ]
         : [],
     },
     twitter: {
@@ -103,7 +103,7 @@ export default async function DetailPostPage({
     .sort(() => Math.random() - 0.5)
     .slice(0, 3);
 
-  const description = post.content.slice(0, 150);
+  const description = post.content.replace(/<[^>]*>/g, "").slice(0, 150);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -167,11 +167,12 @@ export default async function DetailPostPage({
             </div>
           </aside>
 
-          <div className="story-content">
-            {post.content.split("\n").map((paragraph, index) => (
-              <p key={index}>{paragraph}</p>
-            ))}
-          </div>
+          {/* PERBAIKAN UTAMA DI SINI: Menggunakan dangerouslySetInnerHTML */}
+          {/* Tag HTML bawaan Tiptap akan dirender sempurna oleh class story-content bawaan Anda */}
+          <div 
+            className="story-content"
+            dangerouslySetInnerHTML={{ __html: post.content }}
+          />
         </div>
       </article>
 
@@ -194,7 +195,8 @@ export default async function DetailPostPage({
                 </span>
 
                 <h3>{item.title}</h3>
-                <p>{item.content.slice(0, 90)}...</p>
+                {/* Memastikan deskripsi card story lainnya bersih dari kode-kode HTML mentah */}
+                <p>{item.content.replace(/<[^>]*>/g, "").slice(0, 90)}...</p>
                 <p className="meta">By {item.author} • {getReadingTime(post.content)}</p>
 
                 <div className="card-footer">

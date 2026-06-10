@@ -410,12 +410,20 @@ img {
   margin-top: 60px;
 }
 
-.story-cta p {
-  margin-bottom: 14px;
-  color: #475569;
-  font-size: 15px;
+/* Merapikan susunan tag HTML hasil render Tiptap di halaman detail */
+.story-content p {
+  margin-bottom: 16px;
+  line-height: 1.8;
+  color: #374151; /* Gunakan #cbd5e1 jika dalam class .dark */
 }
 
+.story-content strong {
+  font-weight: 700;
+}
+
+.dark .story-content p {
+  color: #cbd5e1;
+}
 .story-cta-btn {
   width: 100%;
   height: 52px;
@@ -2746,4 +2754,34 @@ img {
 
 .dark .pagination-info {
   color: #94a3b8;
+}
+/* Tambahkan ke src/app/globals.css jika tidak pakai Tailwind */
+.scroll-to-top-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: opacity 0.3s ease;
+  z-index: 999;
+}
+
+.scroll-to-top-btn:hover {
+  background-color: #0051a2;
+}
+.editor-content p.is-editor-empty:first-child::before {
+  color: #9ca3af;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
 }

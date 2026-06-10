@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from '@/components/Header';
+import ScrollToTop from '@/components/ScrollToTop';
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -56,7 +57,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id">
-      <body>{children}</body>
+      <body>{children}
+      <ScrollToTop /></body>
     </html>
   );
 }
