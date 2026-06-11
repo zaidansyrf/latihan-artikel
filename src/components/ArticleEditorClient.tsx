@@ -26,9 +26,8 @@ export default function ArticleEditorClient({
   const [categoryName, setCategoryName] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [contentHtml, setContentHtml] = useState("");
-  const cleanPlainText = contentHtml.replace(/<[^>]*>/g, "");
 
-  // Inisialisasi Tiptap Editor
+  // Inisialisasi Tiptap Editor menggantikan textarea lama lu
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -36,31 +35,33 @@ export default function ArticleEditorClient({
       Image,
       Link.configure({ openOnClick: false }),
       Placeholder.configure({
-        placeholder: "Start wrote your story...",
+        placeholder: "Tulis isi artikel di sini...",
       }),
     ],
     content: "",
     editorProps: {
       attributes: {
-        // Mengikat langsung ke class asli editor-content Anda agar gayanya presisi
+        // Mengikat langsung ke class asli editor-content Anda agar stylenya presisi
         class: "editor-content focus:outline-none w-full text-white",
       },
     },
     onUpdate: ({ editor }) => {
-      setContentHtml(editor.getHTML()); // Sinkronisasi teks ke Live Preview
+      setContentHtml(editor.getHTML()); // Update ke Live Preview
     },
     immediatelyRender: false,
   });
 
-  // Daftarkan mesin editor ke Context Share tingkat atas agar Toolbar bisa mengaksesnya
+  // Daftarkan mesin Tiptap ke Context tingkat atas agar ToolbarActions bisa membaca riwayat teks
   useEffect(() => {
     if (editor) {
       setEditor(editor);
     }
   }, [editor, setEditor]);
 
+  const cleanPlainText = contentHtml.replace(/<[^>]*>/g, "");
+
   return (
-    /* 100% STRUKTUR LAYOUT INPUT AREA & LIVE PREVIEW KODE ASLI LAMA ANDA */
+    /* 100% STRUKTUR LAYOUT INPUT AREA & LIVE PREVIEW KODE ASLI LAMA LU */
     <div className="editor-preview-layout">
       <div className="editor-input-area">
         <input
@@ -75,7 +76,7 @@ export default function ArticleEditorClient({
         <div className="editor-meta-row">
           <input
             name="author"
-            placeholder="Author name"
+            placeholder="Author "
             required
             value={author}
             onChange={(e) => setAuthor(e.target.value)}
@@ -92,9 +93,7 @@ export default function ArticleEditorClient({
               setCategoryName(selected?.name || "");
             }}
           >
-            <option value="" disabled>
-              Pilih kategori
-            </option>
+            <option value="" disabled>Pilih kategori</option>
             {categories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
@@ -104,8 +103,9 @@ export default function ArticleEditorClient({
         </div>
 
         <ImageUploadField onUploadComplete={setImageUrl} />
+        <input type="hidden" name="imageUrl" value={imageUrl} />
 
-        {/* Input hidden untuk mengirim data string HTML Tiptap ke Server Action database */}
+        {/* Input hidden untuk mengirim string data HTML Tiptap ke Server Action database */}
         <input type="hidden" name="content" value={contentHtml} />
 
         {/* Editor Tiptap menggantikan posisi textarea lama lu secara akurat */}
@@ -116,7 +116,6 @@ export default function ArticleEditorClient({
         </button>
       </div>
 
-      {/* ASIDE LIVE PREVIEW ASLI MILIK LU */}
       <aside className="article-live-preview">
         <p className="preview-label">Live Preview</p>
 
@@ -131,12 +130,11 @@ export default function ArticleEditorClient({
 
           <div className="preview-content">
             <span className="badge">{categoryName || "Article"}</span>
-
             <h2>{title || "Your title here"}</h2>
-          <p>
+             <p>
               {cleanPlainText
                 ? cleanPlainText.slice(0, 140) + (cleanPlainText.length > 140 ? "..." : "")
-                : "Your article preview will appear here..."}
+                : "Your contents will appear here..."}
             </p>
             <p className="meta">By {author || "Author"}</p>
           </div>

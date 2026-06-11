@@ -1,10 +1,30 @@
 "use client";
 
 import { useSharedEditor } from "@/context/EditorContext";
+import { useEffect, useState } from "react";
 
 export default function ToolbarActions() {
   const { editor } = useSharedEditor();
+  const [canUndo, setCanUndo] = useState(false);
+  const [canRedo, setCanRedo] = useState(false);
 
+  useEffect(() => {
+    if (!editor) return;
+
+    // Fungsi sensor untuk mengecek riwayat setiap kali ada ketikan/perubahan
+    const updateState = () => {
+      setCanUndo(editor.can().undo());
+      setCanRedo(editor.can().redo());
+    };
+
+    // Pasang sensor ke mesin Tiptap
+    editor.on("transaction", updateState);
+
+    // Bersihkan sensor jika komponen dilepas
+    return () => {
+      editor.off("transaction", updateState);
+    };
+  }, [editor]);
   const handleDropdownChange = (value: string) => {
     if (!editor) return;
     if (value === "paragraph") editor.chain().focus().setParagraph().run();

@@ -151,7 +151,8 @@ export default async function AdminArticlesPage({
               <h3>{article.title}</h3>
 
               <p className="admin-article-desc">
-                {article.content.slice(0, 90)}...
+                {/* {article.content.slice(0, 90)}... */}
+                {article.content.replace(/<[^>]*>/g, "").slice(0, 90)}...
               </p>
 
               <p className="admin-article-author">

@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { generateSlug } from "@/lib/slug";
 import Link from "next/link";
 import ArticleEditorClient from "@/components/ArticleEditorClient";
-import {EditorProvider} from "@/context/EditorContext";
+import { EditorProvider } from "@/context/EditorContext";
 import ToolbarActions from "@/components/ToolbarActions";
 
 async function createArticle(formData: FormData) {
@@ -28,7 +28,6 @@ async function createArticle(formData: FormData) {
 }
 
 export default async function CreatePostPage() {
-  // Data kategori ditarik langsung lewat Prisma (Pasti Muncul)
   const categories = await prisma.category.findMany({
     orderBy: {
       name: "asc",
@@ -45,16 +44,12 @@ export default async function CreatePostPage() {
             </Link>
 
             <div>
-              <h2>MyArticles Editor</h2>
-              <p>Write and submit your article for review.</p>
+              <h2>YourStory Editor</h2>
+              <p>Write and submit yours for review.</p>
             </div>
           </div>
-
-          {/* 100% STRUKTUR KODE, FORM, DAN LAYOUT ASLI LAMA LU */}
           <form action={createArticle} className="editor-form">
-            {/* Toolbar dipisahkan ke komponen client pembantu agar tombolnya aktif bisa diklik */}
             <ToolbarActions />
-
             <div className="editor-body">
               <ArticleEditorClient categories={categories} />
             </div>

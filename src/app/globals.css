@@ -1425,7 +1425,7 @@ img {
 .editor-submit:hover {
   background: #06b6d4;
 }
-
+/* UPLOAD IMAGE */
 .image-upload-field {
   display: grid;
   gap: 10px;
@@ -1453,7 +1453,34 @@ img {
 .image-upload-box input {
   display: none;
 }
+/* Aturan Desain Tombol Silang Penghapus Gambar */
+.remove-image-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  background-color: #ef4444; /* Warna Merah */
+  color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  font-size: 22px;
+  font-weight: bold;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  z-index: 10;
+}
 
+.remove-image-btn:hover {
+  background-color: #dc2626; /* Merah agak gelap saat kursor menempel */
+  transform: scale(1.1); /* Efek membesar sedikit */
+}
+/* LIVE PREVIEW */
 .article-live-preview {
   position: sticky;
   top: 100px;
@@ -2539,7 +2566,7 @@ img {
     opacity: 1;
   }
 }
-/* HEADER + SEARCH FILTER FIXED/STICKY LIKE VIDEO */
+/* filter, search sticky */
 @media (min-width: 901px) {
   .header {
     position: sticky !important;
@@ -2637,11 +2664,8 @@ img {
 .pagination-show select {
   height: 36px;
   min-width: 58px;
-
   padding: 0 10px;
-
   font-size: 15px;
-
   border-radius: 10px;
 }
 
@@ -2658,16 +2682,12 @@ img {
 .pagination-pages a {
   width: 32px;
   height: 32px;
-
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   border-radius: 999px;
-
   font-size: 16px;
   font-weight: 600;
-
   transition: 0.2s;
 }
 
@@ -2715,7 +2735,6 @@ img {
   color: #cffafe;
   box-shadow: 0 8px 20px rgba(34, 211, 238, 0.18);
 }
-
 @media (max-width: 768px) {
   .pagination-bar {
     flex-direction: column;
@@ -2755,7 +2774,7 @@ img {
 .dark .pagination-info {
   color: #94a3b8;
 }
-/* Tambahkan ke src/app/globals.css jika tidak pakai Tailwind */
+/* scroll to top */
 .scroll-to-top-btn {
   position: fixed;
   bottom: 20px;
@@ -2784,4 +2803,25 @@ img {
   float: left;
   height: 0;
   pointer-events: none;
+}
+/* filter scroll */
+@media (min-width: 901px) {
+  .filter-list {
+    max-height: 220px; 
+    overflow-y: auto;
+    padding-right: 6px;
+  }
+  .filter-list::-webkit-scrollbar {
+    width: 6px;
+  }
+  .filter-list::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .filter-list::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 10px;
+  }
+  .dark .filter-list::-webkit-scrollbar-thumb {
+    background-color: #475569;
+  }
 }

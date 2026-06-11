@@ -23,9 +23,9 @@ export default async function Page({
   const selectedCategory = searchParams.category || "all";
 
   const page = Number(searchParams.page) || 1;
-  const limit = Number(searchParams.limit) || 10;
-  const allowedLimits = [10, 40, 80];
-  const safeLimit = allowedLimits.includes(limit) ? limit : 10;
+  const limit = Number(searchParams.limit) || 12;
+  const allowedLimits = [12, 24,64];
+  const safeLimit = allowedLimits.includes(limit) ? limit : 12;
 
   const whereCondition = {
     published: true,
