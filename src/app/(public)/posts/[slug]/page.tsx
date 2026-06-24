@@ -30,7 +30,8 @@ async function getPostBySlugOrId(slugOrId: string) {
       ],
     },
     include: {
-      categoryRel: true,
+      categories: true,
+      author: true,
     },
   });
 }
@@ -46,7 +47,7 @@ export async function generateMetadata({
     };
   }
 
-  const description = post.content.replace(/<[^>]*>/g, "").slice(0, 150); // Membersihkan tag HTML untuk deskripsi SEO
+  const description = post.content.replace(/<[^>]*>/g, "").slice(0, 150);
 
   return {
     title: post.title,
@@ -61,8 +62,8 @@ export async function generateMetadata({
               url: post.imageUrl,
               width: 1200,
               height: 630,
-              },
-            ]
+            },
+          ]
         : [],
     },
     twitter: {
@@ -84,14 +85,15 @@ export default async function DetailPostPage({
   }
 
   const otherPosts = await prisma.article.findMany({
-  where: {
-    published: true,
-    id: {
-      not: post.id,
-    },
+    where: {
+      published: true,
+      id: {
+        not: post.id,
+      },
     },
     include: {
-      categoryRel: true,
+      categories: true,
+      author: true
     },
     orderBy: {
       createdAt: "desc",
@@ -112,11 +114,13 @@ export default async function DetailPostPage({
     image: post.imageUrl || "",
     author: {
       "@type": "Person",
-      name: post.author,
+      name: post.author?.name || "Admin",
     },
     datePublished: post.createdAt,
     dateModified: post.updatedAt,
-    articleSection: post.categoryRel?.name || post.category || "Article",
+    articleSection: post.categories && post.categories.length > 0 
+      ? post.categories.map((c: any) => c.name).join(", ") 
+      : "Article",
     description,
   };
 
@@ -152,7 +156,7 @@ export default async function DetailPostPage({
 
         <div className="story-detail-layout">
           <aside className="story-author-box">
-            <p>{post.author}</p>
+            <p>{post.author?.name || (typeof post.author === 'string' ? post.author : "Anonim")}</p>
             <span>
               {new Date(post.createdAt).toLocaleDateString("id-ID", {
                 day: "numeric",
@@ -162,13 +166,18 @@ export default async function DetailPostPage({
               {" • "}
               {getReadingTime(post.content)}
             </span>
-            <div className="badge">
-              {post.categoryRel?.name || post.category || "Article"}
+            <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "8px" }}>
+              {post.categories && post.categories.length > 0 ? (
+                post.categories.map((cat: any) => (
+                  <div key={cat.id} className="badge">{cat.name}</div>
+                ))
+              ) : (
+                <div className="badge">Article</div>
+              )}
             </div>
+
           </aside>
 
-          {/* PERBAIKAN UTAMA DI SINI: Menggunakan dangerouslySetInnerHTML */}
-          {/* Tag HTML bawaan Tiptap akan dirender sempurna oleh class story-content bawaan Anda */}
           <div 
             className="story-content"
             dangerouslySetInnerHTML={{ __html: post.content }}
@@ -190,14 +199,18 @@ export default async function DetailPostPage({
               </div>
 
               <div className="card-content">
-                <span className="badge">
-                  {item.categoryRel?.name || item.category || "Article"}
-                </span>
+                <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "8px" }}>
+                  {item.categories && item.categories.length > 0 ? (
+                    item.categories.map((cat: any) => (
+                      <span key={cat.id} className="badge">{cat.name}</span>
+                    ))
+                  ) : (
+                    <span className="badge">Article</span>
+                  )}
+                </div>
 
                 <h3>{item.title}</h3>
-                {/* Memastikan deskripsi card story lainnya bersih dari kode-kode HTML mentah */}
-                <p>{item.content.replace(/<[^>]*>/g, "").slice(0, 90)}...</p>
-                <p className="meta">By {item.author} • {getReadingTime(post.content)}</p>
+                <p className="meta">{item.author?.name || (typeof item.author === 'string' ? item.author: "Admin")} • {getReadingTime(item.content)}</p>
 
                 <div className="card-footer">
                   <span className="read-more">Read more →</span>

@@ -24,7 +24,7 @@ export default async function Page({
 
   const page = Number(searchParams.page) || 1;
   const limit = Number(searchParams.limit) || 12;
-  const allowedLimits = [12, 24,64];
+  const allowedLimits = [12, 24, 64];
   const safeLimit = allowedLimits.includes(limit) ? limit : 12;
 
   const whereCondition = {
@@ -44,9 +44,12 @@ export default async function Page({
         },
       ],
     }),
-
     ...(selectedCategory !== "all" && {
-      categoryId: Number(selectedCategory),
+      categories: {
+        some: {
+          id: Number(selectedCategory),
+        },
+      },
     }),
   };
 
@@ -59,7 +62,8 @@ export default async function Page({
   const posts = await prisma.article.findMany({
     where: whereCondition,
     include: {
-      categoryRel: true,
+      author: true,
+      categories: true, 
     },
     orderBy: {
       createdAt: "desc",
@@ -73,7 +77,7 @@ export default async function Page({
   });
 
   const totalPages = Math.ceil(totalPosts / safeLimit);
-  const shouldShowPagination = totalPosts > safeLimit;
+  const shouldShowPaginationBar = totalPosts >= 12;
 
   function createPageUrl(targetPage: number, targetLimit = safeLimit) {
     const params = new URLSearchParams();
@@ -89,8 +93,9 @@ export default async function Page({
 
     return `/posts?${params.toString()}`;
   }
-const startItem = totalPosts === 0 ? 0 : (page - 1) * safeLimit + 1;
-const endItem = Math.min(page * safeLimit, totalPosts);
+  const startItem = totalPosts === 0 ? 0 : (page - 1) * safeLimit + 1;
+  const endItem = Math.min(page * safeLimit, totalPosts);
+  
   return (
     <main className="posts-page">
       <section className="articles-banner">
@@ -136,20 +141,8 @@ const endItem = Math.min(page * safeLimit, totalPosts);
               className="article-search-button"
               aria-label="Search"
             >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                aria-hidden="true"
-              >
-                <path
-                  d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
-                  stroke="currentColor"
-                  strokeWidth="2.4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
           </form>
@@ -178,9 +171,7 @@ const endItem = Math.min(page * safeLimit, totalPosts);
               {categories.map((category) => (
                 <li key={category.id}>
                   <Link
-                    className={
-                      selectedCategory === String(category.id) ? "active" : ""
-                    }
+                    className={selectedCategory === String(category.id) ? "active" : ""}
                     href={
                       q
                         ? `/posts?q=${q}&category=${category.id}&limit=${safeLimit}`
@@ -213,15 +204,19 @@ const endItem = Math.min(page * safeLimit, totalPosts);
                   </div>
 
                   <div className="card-content">
-                    <span className="badge">
-                      {post.categoryRel?.name || post.category || "Article"}
-                    </span>
+                    <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "8px" }}>
+                      {post.categories && post.categories.length > 0 ? (
+                        post.categories.map((cat: any) => (
+                          <span key={cat.id} className="badge">{cat.name}</span>
+                        ))
+                      ) : (
+                        <span className="badge">Article</span>
+                      )}
+                    </div>
 
                     <h3>{post.title}</h3>
-                    {/* <p>{post.content.slice(0, 90)}...</p> */}
-                    <p>{post.content.replace(/<[^>]*>/g, "").slice(0, 90)}...</p>
                     <p className="meta">
-                      By {post.author} • {getReadingTime(post.content)}
+                      {post.author?.name || "Admin"} • {getReadingTime(post.content)}
                     </p>
 
                     <div className="card-footer">
@@ -242,7 +237,7 @@ const endItem = Math.min(page * safeLimit, totalPosts);
             </div>
           )}
 
-          {shouldShowPagination && (
+          {shouldShowPaginationBar && (
             <div className="pagination-bar">
               <form className="pagination-show" action="/posts">
                 <span>Show</span>
@@ -264,47 +259,50 @@ const endItem = Math.min(page * safeLimit, totalPosts);
               <p className="pagination-info">
                 Showing {startItem}–{endItem} of {totalPosts} stories
               </p>
-              <div className="pagination-controls">
-                {page > 1 && (
-                  <>
-                    <Link href={createPageUrl(1)} className="pagination-icon">
-                      «
-                    </Link>
 
-                    <Link href={createPageUrl(page - 1)} className="pagination-icon">
-                      ‹
-                    </Link>
-                  </>
-                )}
-
-                <div className="pagination-pages">
-                  {Array.from({ length: totalPages }).map((_, index) => {
-                    const pageNumber = index + 1;
-
-                    return (
-                      <Link
-                        key={pageNumber}
-                        href={createPageUrl(pageNumber)}
-                        className={page === pageNumber ? "active" : ""}
-                      >
-                        {pageNumber}
+              {totalPages > 1 && (
+                <div className="pagination-controls">
+                  {page > 1 && (
+                    <>
+                      <Link href={createPageUrl(1)} className="pagination-icon">
+                        «
                       </Link>
-                    );
-                  })}
+
+                      <Link href={createPageUrl(page - 1)} className="pagination-icon">
+                        ‹
+                      </Link>
+                    </>
+                  )}
+
+                  <div className="pagination-pages">
+                    {Array.from({ length: totalPages }).map((_, index) => {
+                      const pageNumber = index + 1;
+
+                      return (
+                        <Link
+                          key={pageNumber}
+                          href={createPageUrl(pageNumber)}
+                          className={page === pageNumber ? "active" : ""}
+                        >
+                          {pageNumber}
+                        </Link>
+                      );
+                    })}
+                  </div>
+
+                  {page < totalPages && (
+                    <>
+                      <Link href={createPageUrl(page + 1)} className="pagination-icon">
+                        ›
+                      </Link>
+
+                      <Link href={createPageUrl(totalPages)} className="pagination-icon">
+                        »
+                      </Link>
+                    </>
+                  )}
                 </div>
-
-                {page < totalPages && (
-                  <>
-                    <Link href={createPageUrl(page + 1)} className="pagination-icon">
-                      ›
-                    </Link>
-
-                    <Link href={createPageUrl(totalPages)} className="pagination-icon">
-                      »
-                    </Link>
-                  </>
-                )}
-              </div>
+              )}
             </div>
           )}
         </section>

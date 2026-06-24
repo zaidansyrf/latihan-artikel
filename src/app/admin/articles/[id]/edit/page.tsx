@@ -1,68 +1,53 @@
 import { prisma } from "@/lib/prisma";
-import { notFound, redirect } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import AdminEditForm from "./AdminEditForm"; 
 
-async function updateArticle(id: number, formData: FormData) {
-  "use server";
-
-  await prisma.article.update({
-    where: { id },
-    data: {
-      title: formData.get("title") as string,
-      author: formData.get("author") as string,
-      category: formData.get("category") as string,
-      imageUrl: formData.get("imageUrl") as string,
-      content: formData.get("content") as string,
-      published: formData.get("published") === "on",
-    },
-  });
-
-  redirect("/admin/articles");
-}
-
-export default async function EditAdminArticlePage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const id = Number(params.id);
+export default async function AdminEditPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+  const articleId = Number(params.id);
 
   const article = await prisma.article.findUnique({
-    where: { id },
+    where: { id: articleId },
+    include: { categories: true }, 
   });
 
-  if (!article) {
-    notFound();
+  if (!article) return notFound();
+
+  const categories = await prisma.category.findMany({ orderBy: { name: "asc" } });
+
+  async function updateArticle(formData: FormData) {
+    "use server";
+    
+    try {
+      const session = await getServerSession(authOptions);
+      if (!session) throw new Error("Unauthorized");
+
+      const title = formData.get("title") as string;
+      const content = formData.get("content") as string;
+      const author = formData.get("author") as string;
+      const categoryIds = formData.getAll("categories").map(Number);
+
+      await prisma.article.update({
+        where: { id: articleId },
+        data: {
+          title,
+          content,
+          // HAPUS BARIS author: author di sini karena memicu error relasi User
+          categories: {
+            set: [], 
+            connect: categoryIds.map((id) => ({ id })), 
+          },
+        },
+      });
+    } catch (error) {
+      console.error("GAGAL UPDATE ARTIKEL:", error);
+      throw error;
+    }
+
+    redirect("/admin/articles");
   }
 
-  return (
-    <main className="admin-page">
-      <h1>Edit Artikel</h1>
-
-      <form action={updateArticle.bind(null, id)} className="admin-form">
-        <input name="title" defaultValue={article.title} required />
-        <input name="author" defaultValue={article.author} required />
-        <input name="category" defaultValue={article.category || ""} />
-        <input name="imageUrl" defaultValue={article.imageUrl || ""} />
-
-        <textarea
-          name="content"
-          defaultValue={article.content}
-          required
-        />
-
-        <label className="admin-checkbox">
-          <input
-            type="checkbox"
-            name="published"
-            defaultChecked={article.published}
-          />
-          Published
-        </label>
-
-        <button type="submit" className="admin-primary-btn">
-          Simpan Perubahan
-        </button>
-      </form>
-    </main>
-  );
+  return <AdminEditForm article={article} categories={categories} saveAction={updateArticle} />;
 }

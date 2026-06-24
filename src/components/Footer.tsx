@@ -7,7 +7,7 @@ export default function Footer() {
         <div className="footer-brand">
           <h3>YourStory</h3>
           <p>
-            Write, Share, and Read your own Story. Pour out all your thoughts and stories that you want to convey for free without joining
+            Write, Share, and Read the Story. Your daily story for free.
           </p>
         </div>
 
@@ -22,7 +22,7 @@ export default function Footer() {
         <div className="footer-info">
           <h4>Information</h4>
 
-          <p>A simple website built for learning while have fun. this website still under development. Enjoy</p>
+          <p>A simple website built for learning while have fun. this website still under development, some changes might be expected. Enjoy</p>
         </div>
       </div>
 

@@ -33,7 +33,6 @@ export default function ToolbarActions() {
   };
 
   return (
-    /* 100% STRUKTUR TOOLBAR ASLI BAWAAN LU */
     <div className="editor-toolbar">
       <button type="button" onClick={() => editor?.chain().focus().undo().run()} disabled={!editor?.can().undo()}>↶</button>
       <button type="button" onClick={() => editor?.chain().focus().redo().run()} disabled={!editor?.can().redo()}>↷</button>

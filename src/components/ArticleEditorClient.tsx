@@ -15,19 +15,28 @@ type Category = {
   name: string;
 };
 
+//PROPS INITIAL DATA UNTUK KEBUTUHAN EDIT
 export default function ArticleEditorClient({
   categories,
+  initialTitle = "",
+  initialContent = "",
+  initialImageUrl = "",
+  initialSelectedCategories = [],
 }: {
   categories: Category[];
+  initialTitle?: string;
+  initialContent?: string;
+  initialImageUrl?: string;
+  initialSelectedCategories?: Category[];
 }) {
   const { setEditor } = useSharedEditor();
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [categoryName, setCategoryName] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
-  const [contentHtml, setContentHtml] = useState("");
+  
+  //MASUKKAN INITIAL DATA KE DALAM STATE
+  const [title, setTitle] = useState(initialTitle);
+  const [selectedCategories, setSelectedCategories] = useState<Category[]>(initialSelectedCategories);
+  const [imageUrl, setImageUrl] = useState(initialImageUrl);
+  const [contentHtml, setContentHtml] = useState(initialContent);
 
-  // Inisialisasi Tiptap Editor menggantikan textarea lama lu
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -38,20 +47,18 @@ export default function ArticleEditorClient({
         placeholder: "Tulis isi artikel di sini...",
       }),
     ],
-    content: "",
+    content: initialContent,
     editorProps: {
       attributes: {
-        // Mengikat langsung ke class asli editor-content Anda agar stylenya presisi
         class: "editor-content focus:outline-none w-full text-white",
       },
     },
     onUpdate: ({ editor }) => {
-      setContentHtml(editor.getHTML()); // Update ke Live Preview
+      setContentHtml(editor.getHTML());
     },
     immediatelyRender: false,
   });
 
-  // Daftarkan mesin Tiptap ke Context tingkat atas agar ToolbarActions bisa membaca riwayat teks
   useEffect(() => {
     if (editor) {
       setEditor(editor);
@@ -60,8 +67,34 @@ export default function ArticleEditorClient({
 
   const cleanPlainText = contentHtml.replace(/<[^>]*>/g, "");
 
+  const maxLimit = 8;
+  const isAllSelected = selectedCategories.length > 0 && (selectedCategories.length === categories.length || selectedCategories.length === maxLimit);
+  const isIndeterminate = selectedCategories.length > 0 && !isAllSelected;
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const handleMasterCheckboxChange = () => {
+    if (isAllSelected || isIndeterminate) {
+      setSelectedCategories([]); 
+    } else {
+      setSelectedCategories(categories.slice(0, maxLimit));
+    }
+  };
+
+  const handleCategoryChange = (category: Category) => {
+    const isSelected = selectedCategories.some((c) => c.id === category.id);
+    
+    if (isSelected) {
+      setSelectedCategories((prev) => prev.filter((c) => c.id !== category.id));
+    } else {
+      if (selectedCategories.length >= maxLimit) {
+        alert(`Maksimal ${maxLimit} kategori yang dapat dipilih.`);
+        return;
+      }
+      setSelectedCategories((prev) => [...prev, category]);
+    }
+  };
+
   return (
-    /* 100% STRUKTUR LAYOUT INPUT AREA & LIVE PREVIEW KODE ASLI LAMA LU */
     <div className="editor-preview-layout">
       <div className="editor-input-area">
         <input
@@ -73,52 +106,64 @@ export default function ArticleEditorClient({
           onChange={(e) => setTitle(e.target.value)}
         />
 
-        <div className="editor-meta-row">
-          <input
-            name="author"
-            placeholder="Author "
-            required
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-          />
+        <div className="editor-meta-row" style={{ position: "relative" }}>
+          {selectedCategories.map((cat) => (
+            <input key={`hidden-${cat.id}`} type="hidden" name="categoryIds" value={cat.id} />
+          ))}
 
-          <select
-            name="categoryId"
-            required
-            defaultValue=""
-            onChange={(e) => {
-              const selected = categories.find(
-                (category) => String(category.id) === e.target.value
-              );
-              setCategoryName(selected?.name || "");
-            }}
-          >
-            <option value="" disabled>Pilih kategori</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
+          <div className="custom-category-dropdown">
+            <div 
+              className={`dropdown-trigger ${isDropdownOpen ? 'open' : ''}`}
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            >
+              <div className="master-checkbox-wrapper" onClick={(e) => e.stopPropagation()}>
+                <input
+                  type="checkbox"
+                  className="checkbox-input"
+                  ref={(el) => { if (el) el.indeterminate = isIndeterminate; }}
+                  checked={isAllSelected}
+                  onChange={handleMasterCheckboxChange}
+                />
+              </div>
+              <span className="dropdown-label">Pilih kategori ({selectedCategories.length}/{maxLimit})</span>
+              <span className="dropdown-icon">{isDropdownOpen ? "ᐱ" : "ᐯ"}</span>
+            </div>
+
+            {isDropdownOpen && (
+              <div className="dropdown-menu">
+                {categories.map((category) => (
+                  <label key={category.id} className="dropdown-item">
+                    <input
+                      type="checkbox"
+                      className="checkbox-input"
+                      checked={selectedCategories.some(c => c.id === category.id)}
+                      onChange={() => handleCategoryChange(category)}
+                    />
+                    {category.name}
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
-        <ImageUploadField onUploadComplete={setImageUrl} />
+        {/* 4. PASSING GAMBAR LAMA KE UPLOADER BIAR MUNCUL PREVIEWNYA */}
+        <ImageUploadField 
+          onUploadComplete={setImageUrl} 
+          initialPreview={imageUrl} 
+        />
         <input type="hidden" name="imageUrl" value={imageUrl} />
-
-        {/* Input hidden untuk mengirim string data HTML Tiptap ke Server Action database */}
         <input type="hidden" name="content" value={contentHtml} />
 
-        {/* Editor Tiptap menggantikan posisi textarea lama lu secara akurat */}
         <EditorContent editor={editor} />
 
         <button type="submit" className="editor-submit">
-          Submit
+          Save Changes
         </button>
       </div>
 
       <aside className="article-live-preview">
         <p className="preview-label">Live Preview</p>
-
         <div className="preview-card">
           <div className="preview-image">
             {imageUrl ? (
@@ -129,14 +174,21 @@ export default function ArticleEditorClient({
           </div>
 
           <div className="preview-content">
-            <span className="badge">{categoryName || "Article"}</span>
+            <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "8px" }}>
+              {selectedCategories.length > 0 ? (
+                selectedCategories.map((cat) => (
+                  <span key={`badge-${cat.id}`} className="badge">{cat.name}</span>
+                ))
+              ) : (
+                <span className="badge">Article</span>
+              )}
+            </div>
             <h2>{title || "Your title here"}</h2>
              <p>
               {cleanPlainText
                 ? cleanPlainText.slice(0, 140) + (cleanPlainText.length > 140 ? "..." : "")
                 : "Your contents will appear here..."}
             </p>
-            <p className="meta">By {author || "Author"}</p>
           </div>
         </div>
       </aside>

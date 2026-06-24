@@ -4,7 +4,8 @@ import { Post } from "@/types/Post";
 export async function getPost(): Promise<Post[]> {
   const posts = await prisma.article.findMany({
     include: {
-      categoryRel: true,
+      categories: true,
+      author: true, // <-- TAMBAHAN: Ambil data user
     },
     where: {
       published: true,
@@ -15,7 +16,7 @@ export async function getPost(): Promise<Post[]> {
     take: 6,
   });
 
-  return posts;
+  return posts as unknown as Post[];
 }
 
 export async function getDetailPost(id: number): Promise<Post | null> {
@@ -24,32 +25,36 @@ export async function getDetailPost(id: number): Promise<Post | null> {
       id,
     },
     include: {
-      categoryRel: true,
+      categories: true,
+      author: true, // <-- TAMBAHAN: Ambil data user
     },
   });
 
-  return post;
+  return post as unknown as Post;
 }
 
 export async function getAllPost(): Promise<Post[]> {
   const posts = await prisma.article.findMany({
     include: {
-      categoryRel: true,
+      categories: true,
+      author: true, // <-- TAMBAHAN: Ambil data user
     },
     orderBy: {
       createdAt: "desc",
     },
   });
 
-  return posts;
+  return posts as unknown as Post[];
 }
+
 export async function getLastPost(): Promise<Post[]> {
   const posts = await prisma.article.findMany({
     where: {
       published: true,
     },
     include: {
-      categoryRel: true,
+      categories: true,
+      author: true, // <-- TAMBAHAN: Ambil data user
     },
     orderBy: {
       createdAt: "desc",
@@ -57,5 +62,5 @@ export async function getLastPost(): Promise<Post[]> {
     take: 4,
   });
 
-  return posts;
+  return posts as unknown as Post[];
 }

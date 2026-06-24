@@ -98,6 +98,18 @@ img {
   position: relative;
   z-index: 1003;
 }
+.mobile-logout-icon {
+  display: none !important; 
+}
+@media (max-width: 768px) {
+  /* Munculkan icon di header mobile */
+  .mobile-logout-icon {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+  }
+}
 
 .theme-button,
 .theme-switcher {
@@ -403,14 +415,10 @@ img {
   font-size: 14px;
 }
 
-/* =========================================
-   STORY CTA
-========================================= */
 .story-cta {
   margin-top: 60px;
 }
 
-/* Merapikan susunan tag HTML hasil render Tiptap di halaman detail */
 .story-content p {
   margin-bottom: 16px;
   line-height: 1.8;
@@ -424,12 +432,13 @@ img {
 .dark .story-content p {
   color: #cbd5e1;
 }
+/* join button */
 .story-cta-btn {
-  width: 100%;
+  width: 50%;
   height: 52px;
   border-radius: 999px;
   background: #e0f7fa;
-  color: #0f172a;
+  color: #0891b2;
   font-weight: 700;
   font-size: 15px;
   cursor: pointer;
@@ -442,6 +451,33 @@ img {
 .story-cta-btn:hover {
   transform: translateY(-2px);
   background: #b2ebf2;
+}
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px; 
+}
+.join-button-header {
+  display: none; 
+}
+/* mobile join button */
+@media (max-width: 768px) {
+  .join-button-header {
+    display: inline-block;
+    background-color: #e0f7fa; 
+    color: #00838f;
+    padding: 6px 16px; 
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+  }
 }
 
 /* FEATURED STORY FINAL */
@@ -581,7 +617,7 @@ img {
   color: #cffafe;
 }
 
-/* MOBILE */
+/* MOBILE FEATURED */
 @media (max-width: 900px) {
   .featured-label {
     margin-left: 0;
@@ -1453,7 +1489,7 @@ img {
 .image-upload-box input {
   display: none;
 }
-/* Aturan Desain Tombol Silang Penghapus Gambar */
+/* CLEAR IMAGE BUTTON */
 .remove-image-btn {
   position: absolute;
   top: 12px;
@@ -2047,7 +2083,7 @@ img {
 .dark .story-cta p {
   color: #cbd5e1;
 }
-
+.dark .join-button-header,
 .dark .story-cta-btn,
 .dark .read-more,
 .dark .error-link,
@@ -2065,7 +2101,8 @@ img {
   background: #111827;
   border-color: #334155;
 }
-
+.dark .mypage-card-actions,
+.dark .mypage-card,
 .dark .featured-image,
 .dark .card-image,
 .dark .admin-article-thumb,
@@ -2823,5 +2860,492 @@ img {
   }
   .dark .filter-list::-webkit-scrollbar-thumb {
     background-color: #475569;
+  }  
+}
+/* =========================================
+   MY PAGE STYLES (Disesuaikan dengan Mockup)
+   ========================================= */
+.mypage-container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+.mypage-banner { background: linear-gradient(135deg, #a5f3fc 0%, #7dd3fc 100%); border-radius: 16px; padding: 60px 20px; text-align: center; margin-bottom: 40px; }
+.mypage-banner h1 { font-size: 2.5rem; font-weight: 800; color: #111; margin-bottom: 8px; }
+.mypage-banner p { font-size: 1.1rem; color: #333; }
+
+.mypage-top-actions { display: flex; justify-content: flex-end; margin-bottom: 30px; }
+.btn-mypage-create { background-color: #dcfce7; color: #166534; padding: 10px 30px; border-radius: 9999px; font-weight: 600; transition: 0.3s; }
+.btn-mypage-create:hover { background-color: #bbf7d0; }
+
+.mypage-layout { display: flex; gap: 40px; }
+
+/* Sidebar */
+.mypage-sidebar { width: 25%; display: flex; flex-direction: column; gap: 24px; }
+.mypage-search-input { padding: 12px 20px; border: 1px solid #ddd; border-radius: 9999px; width: 100%; outline: none; }
+.mypage-filters h3 { font-weight: 700; margin-bottom: 16px; font-size: 1.1rem; }
+.mypage-filters ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.mypage-filters li { padding: 10px 16px; border-radius: 8px; cursor: pointer; color: #555; }
+.mypage-filters li.active { background-color: #e0f2fe; color: #0369a1; font-weight: 600; }
+.mypage-logout-wrapper { margin-top: auto; padding-top: 60px; }
+.btn-mypage-logout { background-color: #fecdd3; color: #9f1239; padding: 10px 30px; border-radius: 9999px; font-weight: bold; display: inline-block; }
+
+/* Grid & Cards */
+.mypage-grid { width: 75%; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; align-items: start; }
+.mypage-card { border: 1px solid #eaeaea; border-radius: 16px; padding: 16px; background: white; display: flex; flex-direction: column; height: 100%; }
+.mypage-card-image { position: relative; width: 100%; height: 180px; background: #f3f4f6; border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
+.img-cover { object-fit: cover; }
+.img-placeholder { display: flex; align-items: center; justify-content: center; height: 100%; color: #9ca3af; }
+.mypage-card-meta { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 12px; }
+.badge-category { background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 4px; font-weight: 600; }
+.badge-status { color: #6b7280; font-weight: 600; }
+.mypage-card-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; line-height: 1.4; }
+.mypage-card-excerpt { font-size: 0.9rem; color: #6b7280; margin-bottom: 20px; flex-grow: 1; }
+
+/* Action Buttons in Card */
+.mypage-card-actions { display: flex; gap: 8px; margin-top: auto; }
+.btn-action { padding: 6px 16px; border-radius: 9999px; font-size: 0.8rem; font-weight: 600; }
+.btn-action.view { background: #e0f2fe; color: #075985; }
+.btn-action.edit { background: #f3f4f6; color: #374151; }
+/* Tambahkan ini di bagian CSS My Page lu */
+.btn-action.delete {
+  background-color: #fee2e2; /* Warna merah muda lembut */
+  color: #991b1b; /* Warna teks merah tua */
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-action.delete:hover {
+  background-color: #fecaca; /* Merah sedikit lebih gelap saat hover */
+}
+
+/* Pastikan btn-action secara umum sudah punya gaya dasar ini */
+.btn-action {
+  padding: 6px 16px;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-block;
+}
+/* Custom Category Dropdown */
+.custom-category-dropdown { position: relative; width: 100%; max-width: 300px; margin-bottom: 1rem; }
+.dropdown-trigger { display: flex; align-items: center; background-color: #f8f9fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px 14px; cursor: pointer; user-select: none; }
+.dropdown-trigger.open { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom: none; }
+.master-checkbox-wrapper { display: flex; align-items: center; margin-right: 12px; }
+.dropdown-label { flex: 1; font-size: 14px; color: #374151; }
+.dropdown-icon { font-size: 12px; color: #6b7280; }
+.dropdown-menu { position: absolute; top: 100%; left: 0; right: 0; background-color: #f8f9fa; border: 1px solid #e5e7eb; border-top: none; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; max-height: 200px; overflow-y: auto; z-index: 100; padding: 4px 0; }
+.dropdown-item { display: flex; align-items: center; padding: 8px 14px; cursor: pointer; font-size: 14px; color: #374151; }
+.dropdown-item:hover { background-color: #e5e7eb; }
+.checkbox-input { margin-right: 10px; cursor: pointer; accent-color: #55c4c4; width: 16px; height: 16px; }
+  /* --- FAB (Floating Action Button) --- */
+.fab-create-mobile {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background-color: #d1fae5; /* Sesuai mockup hijau muda */
+  color: #064e3b;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 28px;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 9999; /* Memastikan tombol selalu paling depan */
+  text-decoration: none;
+}
+
+/* --- Card Styling --- */
+.dark .mypage-card {
+  background: #1e293b; /* Warna background card dark mode */
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #334155;
+  color: white;
+}
+
+.mypage-card-image {
+  width: 100%;
+  height: 180px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.mypage-card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.mypage-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.mypage-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+@media (min-width: 768px) {
+  .mobile-controls-wrapper {
+    display: none;
   }
+}
+
+@media (min-width: 768px) {
+  .fab-create-mobile {
+    display: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .mypage-top-actions {
+    display: none; 
+  }
+}
+/* SEARCH MOBILE */
+@media (max-width: 900px) {
+  .mypage-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+  }
+
+  .mypage-layout .home-filter-sidebar {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    flex-direction: row !important;
+    gap: 1px !important;
+    margin-bottom: 24px !important;
+  }
+
+  .mypage-layout .article-search{
+    flex: 2.6 !important;
+    margin: 0 !important;
+  }
+  .mypage-layout .mobile-controls-wrapper {
+    width: 40% !important;
+    margin: 0 !important;
+  }
+  
+  .mypage-layout .mobile-filter-form,
+  .mypage-layout .custom-category-dropdown {
+    width: 100% !important;
+    margin: 0 !important;
+    padding-left: 10%;
+  }
+
+  .mypage-layout .article-search-input{
+    width: 100% !important;
+    height: 48px !important;
+    border-radius: 9999px !important; 
+    border: 1px solid #475569 !important;
+    padding: 0 88px 0 20px !important; /* KUNCI: 88px adalah ruang untuk tombol */
+    background: transparent !important;
+    font-size: 14px !important;
+  }
+  .mypage-layout .custom-category-dropdown .dropdown-trigger {
+    width: 100% !important;
+    height: 48px !important;
+    border-radius: 9999px !important; 
+    border: 1px solid #475569 !important;
+    padding: 0 16px !important; 
+    background: transparent !important;
+    font-size: 14px !important;
+  }
+
+  .mypage-layout .article-search-button{
+    display: grid !important;
+  }
+  .mypage-layout .article-search-clear {
+    display: block !important;
+    right: 54px !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .home-page .article-search,
+  .posts-page .article-search {
+    flex: none !important;
+    width: 100% !important;
+    margin-bottom: 22px !important;
+  }
+  
+  .home-page .article-search-input,
+  .posts-page .article-search-input {
+    width: 100% !important;
+    padding: 0 88px 0 18px !important;
+  }
+  
+  .home-page .article-search-button,
+  .posts-page .article-search-button {
+    display: grid !important;
+  }
+}
+/* toast notif */
+.custom-toast-container {
+  background-color: #ebfad6;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  width: 360px;
+  pointer-events: auto;
+  border: 1px solid #d4f0b9;
+}
+
+.custom-toast-body {
+  display: flex;
+  align-items: flex-start;
+  padding: 16px 20px 12px 20px;
+  gap: 14px;
+}
+
+.custom-toast-icon {
+  width: 22px;
+  height: 22px;
+  color: #3b823e; 
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.custom-toast-text {
+  font-size: 14px;
+  color: #3b823e; 
+  line-height: 1.5;
+  margin: 0;
+}
+
+.custom-toast-text strong {
+  font-weight: 800;
+}
+
+/* --- ANIMASI PROGRESS BAR GARIS BAWAH --- */
+.custom-toast-progress {
+  height: 2px;
+  background-color: #7bb57d; /* Warna garis progress */
+  margin: 0 20px 14px 20px; 
+  border-radius: 2px;
+  transform-origin: left;
+  animation: shrinkProgress 4s linear forwards; /*durasi*/
+}
+
+@keyframes shrinkProgress {
+  0% { transform: scaleX(1); }
+  100% { transform: scaleX(0); }
+}
+
+/* --- ANIMASI MUNCUL/HILANG TOAST --- */
+.toast-enter {
+  animation: toastFadeInDown 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+.toast-leave {
+  animation: toastFadeOutUp 0.3s ease-in forwards;
+}
+
+@keyframes toastFadeInDown {
+  from { opacity: 0; transform: translate3d(0, -20px, 0) scale(0.95); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+@keyframes toastFadeOutUp {
+  from { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+  to { opacity: 0; transform: translate3d(0, -20px, 0) scale(0.95); }
+}
+
+/* Penyesuaian Lebar di Mobile (Tampil di atas Tengah) */
+@media (max-width: 640px) {
+  .custom-toast-container {
+    width: calc(100vw - 32px);
+  }
+}
+/* =========================================
+   ADMIN RESPONSIVE (MOBILE VIEW)
+========================================= */
+@media (max-width: 900px) {
+  /* Ubah layout grid menjadi tumpukan atas-bawah */
+  .admin-layout {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* Rapikan Sidebar agar membentang secara horizontal */
+  .admin-sidebar {
+    padding: 20px 24px !important;
+  }
+
+  .admin-sidebar h2 {
+    margin-bottom: 16px !important;
+    font-size: 20px !important;
+  }
+
+  .admin-sidebar nav {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto !important; /* Bisa di-scroll ke samping */
+    gap: 12px !important;
+    padding-bottom: 8px !important;
+  }
+
+  .admin-sidebar nav a {
+    white-space: nowrap !important; /* Teks tidak turun ke baris baru */
+    padding: 8px 16px !important;
+    background: #1e293b;
+  }
+
+  /* Reset tombol logout agar tidak tertinggal jauh di bawah */
+  .admin-sidebar > div {
+    padding-top: 16px !important;
+    margin-top: 0 !important;
+  }
+
+  .admin-main {
+    padding: 24px 16px !important;
+  }
+}
+
+/* Sedikit perbaikan untuk scrollbar di sidebar mobile */
+.admin-sidebar nav::-webkit-scrollbar {
+  height: 4px;
+}
+.admin-sidebar nav::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 4px;
+}
+/* =========================================
+   POLISHING ADMIN ARTICLES (RESPONSIVE & SEARCH)
+========================================= */
+
+/* 1. Wrapper Search agar tombol X (Clear) posisinya pas */
+.admin-search-wrapper {
+  position: relative;
+  flex: 1;
+  max-width: 100%;
+}
+
+.admin-search-wrapper .admin-search-input {
+  width: 100%;
+  padding-right: 36px !important; /* Memberikan ruang di kanan agar teks tidak menabrak X */
+}
+
+/* 2. Tombol X (Clear) di Admin */
+.admin-search-clear-btn {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 22px;
+  color: #64748b;
+  font-weight: bold;
+  text-decoration: none;
+  line-height: 1;
+}
+
+.admin-search-clear-btn:hover {
+  color: #ef4444; /* Berubah merah saat disorot */
+}
+
+/* 3. Memastikan bungkus Link pada tab filter tidak merusak layout */
+.admin-filter-tabs a {
+  text-decoration: none;
+  display: inline-block;
+}
+
+/* =========================================
+   TAMPILAN MOBILE (HP) UNTUK ADMIN ARTICLES
+========================================= */
+@media (max-width: 768px) {
+  /* Header menjadi atas-bawah */
+  .admin-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  /* Toolbar (Search & Tabs) memanjang ke bawah */
+  .admin-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  /* Buat tab filter bisa di-scroll (geser) ke samping kalau layar terlalu sempit */
+  .admin-filter-tabs {
+    width: 100%;
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 6px;
+  }
+
+  .admin-filter-tabs a {
+    flex: 1;
+  }
+
+  .admin-filter-tabs button {
+    width: 100%;
+    white-space: nowrap;
+    text-align: center;
+  }
+
+  /* Grid Card menjadi 1 Kolom Penuh */
+  .admin-article-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Tombol-tombol Aksi di Card menjadi melintang/sejajar rapi agar mudah dipencet */
+  .admin-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .admin-actions form,
+  .admin-actions > a {
+    flex: 1 1 calc(50% - 4px); /* Membagi tombol jadi 2 sejajar jika muat */
+  }
+
+  .admin-actions button, 
+  .admin-actions a {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+}
+/* 1. Wrapper Search agar tombol X (Clear) posisinya pas */
+.admin-search-wrapper {
+  position: relative;
+  flex: 1;
+  max-width: 360px !important; 
+}
+
+.admin-search-wrapper .admin-search-input {
+  width: 100% !important;
+  max-width: 100% !important; 
+  /* KUNCI: Naikkan padding jadi 88px agar teks tidak nabrak 2 tombol */
+  padding-right: 88px !important; 
+}
+
+/* 2. Tombol X (Clear) di Admin */
+.admin-search-clear-btn {
+  position: absolute;
+  /* KUNCI: Geser X ke kiri sejauh 54px agar Kaca Pembesar bisa masuk di pojok kanan */
+  right: 54px !important; 
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 22px;
+  color: #64748b;
+  font-weight: bold;
+  text-decoration: none;
+  line-height: 1;
+  z-index: 2;
+}
+
+.admin-search-clear-btn:hover {
+  color: #ef4444; 
 }

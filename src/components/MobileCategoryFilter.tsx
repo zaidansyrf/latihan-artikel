@@ -10,11 +10,13 @@ type Category = {
 export default function MobileCategoryFilter({
   categories,
   selectedCategory,
-  q,
+  q = "",
+  basePath = "/posts",
 }: {
   categories: Category[];
   selectedCategory: string;
   q?: string;
+  basePath?: string;
 }) {
   const router = useRouter();
 

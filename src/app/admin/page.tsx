@@ -16,7 +16,7 @@ export default async function AdminDashboardPage() {
 
   const latestArticles = await prisma.article.findMany({
     include: {
-      categoryRel: true,
+      categories: true,
     },
     orderBy: {
       createdAt: "desc",
@@ -73,13 +73,16 @@ export default async function AdminDashboardPage() {
           {latestArticles.map((article) => (
             <div className="admin-article-row" key={article.id}>
               <div>
+                <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                  {article.categories && article.categories.length > 0 ? (
+                    article.categories.map((cat: any) => (
+                      <span key={cat.id} className="admin-category">{cat.name}</span>
+                    ))
+                  ) : (
+                    <span className="admin-category">Article</span>
+                  )}
+                </div>
                 <h3>{article.title}</h3>
-                <p>
-                  {article.categoryRel?.name ||
-                    article.category ||
-                    "Article"}{" "}
-                  · By {article.author}
-                </p>
               </div>
 
               <span
